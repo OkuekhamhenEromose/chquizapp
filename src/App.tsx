@@ -1,35 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import Registration from './components/Registration';
+import Start from './components/Start';
+import Quiz from './components/Quiz';
+import Result from './components/Result';
+import { QUIZ_STAGES } from './constants/constant';
+import type { QuizStage } from './constants/constant';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [quizStage, setQuizStage] = useState<QuizStage>(QUIZ_STAGES.REGISTRATION);
+  const [score, setScore] = useState(0);
+  const [userName, setUserName] = useState('');
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+  const renderCurrentStage = () => {
+    switch (quizStage) {
+      case QUIZ_STAGES.REGISTRATION:
+        return <Registration setQuizStage={setQuizStage} setUserName={setUserName} />;
+      case QUIZ_STAGES.START:
+        return <Start setQuizStage={setQuizStage} userName={userName} />;
+      case QUIZ_STAGES.IN_PROGRESS:
+        return (
+          <Quiz
+            score={score}
+            setScore={setScore}
+            setQuizStage={setQuizStage}
+            userName={userName}
+          />
+        );
+      case QUIZ_STAGES.ENDED:
+        return (
+          <Result
+            score={score}
+            setScore={setScore}
+            setQuizStage={setQuizStage}
+            userName={userName}
+          />
+        );
+      default:
+        return <Registration setQuizStage={setQuizStage} setUserName={setUserName} />;
+    }
+  };
 
-export default App
+  return <div className="app">{renderCurrentStage()}</div>;
+};
+
+export default App;
